@@ -113,7 +113,7 @@ function formatDate(dateStr) {
   try {
     const [y, m, d] = dateStr.split('-').map(Number);
     return new Date(y, m - 1, d).toLocaleDateString('en-US', {
-      year: 'numeric', month: 'long', day: 'numeric'
+      year: 'numeric', month: 'short', day: 'numeric'
     });
   } catch {
     return dateStr;
