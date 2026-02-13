@@ -774,6 +774,7 @@ footer {
   padding-right: 0;
   color: var(--text-muted);
   white-space: nowrap;
+  text-align: center;
 }
 
 .gear-subtotal td {
