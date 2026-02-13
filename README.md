@@ -1,7 +1,7 @@
-# Hiking Journal — Static GitHub Pages Site
+# McD Moves — Trip Recap Site
 
-A personal long-distance hiking journal built with pure HTML, CSS, and vanilla JavaScript.
-No backend. No build tools. No dependencies beyond Leaflet (loaded from CDN).
+A personal long-distance backpacking journal built with pure HTML, CSS, and vanilla JavaScript.
+No backend. No build tools. No frameworks. No API keys. Runs entirely on GitHub Pages.
 
 ---
 
@@ -9,44 +9,37 @@ No backend. No build tools. No dependencies beyond Leaflet (loaded from CDN).
 
 ```
 /
-├── index.html               ← Homepage (lists all trips)
+├── index.html                        ← Homepage (lists all trips dynamically)
 ├── css/
-│   └── style.css            ← All styles
+│   └── style.css                     ← All styles for every page
 ├── js/
-│   ├── utils.js             ← Shared math helpers (distance, elevation, date)
-│   ├── main.js              ← Homepage script (reads trips.json, renders cards)
-│   └── trip.js              ← Trip page script (map, stats, day table)
+│   ├── utils.js                      ← Shared math: distance, elevation, dates
+│   ├── main.js                       ← Homepage: fetches meta + GeoJSON, renders cards
+│   ├── trip.js                       ← Trip page: map, stats, day table
+│   └── gear.js                       ← Trip page: loads and renders gear list
 ├── data/
-│   ├── trips.json           ← Master list of trips (homepage reads this)
-│   ├── appalachian-trail/
-│   │   ├── meta.json        ← Trip metadata (title, dates, day file list)
-│   │   ├── day-1.geojson
-│   │   ├── day-2.geojson
-│   │   └── day-3.geojson
-│   └── john-muir-trail/
-│       ├── meta.json
+│   ├── trips.json                    ← Master list of trips (homepage reads this)
+│   └── {trip-folder}/
+│       ├── meta.json                 ← Trip metadata: title, dates, day file list
+│       ├── gear.json                 ← Gear list (optional — section hidden if absent)
 │       ├── day-1.geojson
 │       ├── day-2.geojson
-│       └── day-3.geojson
-└── trips/
-    ├── appalachian-trail.html
-    └── john-muir-trail.html
+│       └── ...
+├── trips/
+│   └── {trip-name}.html             ← One HTML file per trip
+└── photos/
+    └── {trip-folder}/               ← Photos for journal section
+        └── your-photo.jpg
 ```
 
 ---
 
-## Deploy to GitHub Pages
+## Adding a New Trip — Step by Step
 
-1. Push this entire folder to a GitHub repository.
-2. Go to **Settings → Pages**.
-3. Set source to **Deploy from a branch**, branch: `main`, folder: `/ (root)`.
-4. Visit `https://<your-username>.github.io/<repo-name>/`.
+### Step 1 — Create the data folder
 
----
-
-## Adding a New Trip (Step-by-Step)
-
-### 1. Create a data folder
+Create a new folder inside `/data/` using a short, lowercase, hyphenated name.
+This name is your **trip ID** and must be used consistently across all files.
 
 ```
 data/
@@ -57,16 +50,18 @@ data/
     └── ...
 ```
 
-### 2. Fill in `meta.json`
+---
+
+### Step 2 — Create `meta.json`
 
 ```json
 {
-  "title": "My New Trip",
-  "description": "A short description shown below the title.",
+  "title": "Trip Name",
+  "description": "One sentence shown below the title on the trip page.",
   "start_date": "2025-06-01",
   "start_time": "07:00",
-  "end_date":   "2025-06-10",
-  "end_time":   "15:30",
+  "end_date": "2025-06-10",
+  "end_time": "15:30",
   "days": [
     "day-1.geojson",
     "day-2.geojson",
@@ -75,10 +70,14 @@ data/
 }
 ```
 
-### 3. Create GeoJSON files for each day
+- `start_time` / `end_time` are in 24-hour format (`HH:MM`) and used to compute Duration
+- The `days` array must list filenames that exactly match your GeoJSON files (case-sensitive)
 
-Each file is a GeoJSON FeatureCollection with a single LineString feature.
-Coordinates are `[longitude, latitude, elevation_meters]`.
+---
+
+### Step 3 — Add GeoJSON files for each day
+
+Each file represents one day's route. Coordinates are `[longitude, latitude, elevation_meters]`.
 
 ```json
 {
@@ -88,14 +87,14 @@ Coordinates are `[longitude, latitude, elevation_meters]`.
       "type": "Feature",
       "properties": {
         "day": 1,
-        "name": "Day 1 description"
+        "name": "Optional day description"
       },
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [-118.2923, 36.5785, 2100],
-          [-118.2901, 36.5712, 2210],
-          [-118.2876, 36.5648, 2380]
+          [-72.1234, 43.5678, 450],
+          [-72.1198, 43.5701, 512],
+          [-72.1162, 43.5731, 598]
         ]
       }
     }
@@ -103,14 +102,13 @@ Coordinates are `[longitude, latitude, elevation_meters]`.
 }
 ```
 
-**Notes on coordinates:**
-- Longitude comes BEFORE latitude (this is the GeoJSON standard).
-- Elevation is in **metres** above sea level (3rd element; optional but needed for elevation gain calculation).
-- The more points, the smoother and more accurate the route will appear.
-- You can export a GPX from your GPS watch/Garmin/Strava, then convert it to GeoJSON using a free tool like [gpx.studio](https://gpx.studio) or [MyGeodata Converter](https://mygeodata.cloud/converter/).
+**Important coordinate notes:**
+- Longitude comes **before** latitude (GeoJSON standard — opposite of Google Maps)
+- Elevation is in **metres**, not feet
+- More points = smoother, more accurate route on the map
+- Distance and elevation gain are **computed automatically** from coordinates
 
-**Optional: provide stats manually (overrides calculation):**
-
+**Optional — provide stats manually to override calculation:**
 ```json
 "properties": {
   "day": 1,
@@ -119,94 +117,193 @@ Coordinates are `[longitude, latitude, elevation_meters]`.
 }
 ```
 
-If these properties are present, the app uses them directly instead of computing from coordinates.
+**Getting GPS data into GeoJSON:**
+1. Export your route from Caltopo as **GPX** with "Add SRTM elevation to track points" checked
+2. Convert GPX to GeoJSON at [gpx.studio](https://gpx.studio) or [mygeodata.cloud/converter](https://mygeodata.cloud/converter/)
+3. Split into one file per day at each campsite
 
-### 4. Create a trip HTML page
+---
 
-Copy `trips/appalachian-trail.html` to `trips/my-new-trip.html`.
+### Step 4 — Create the trip HTML page
 
-Change **only** this line:
+Copy any existing file from `/trips/` to `/trips/my-new-trip.html`.
+
+Change **only** this one line near the bottom of the file:
 
 ```html
 <script>
-  window.TRIP_ID = 'my-new-trip';  ← change this to match your /data/ folder name
+  window.TRIP_ID = 'my-new-trip';   ← must match your /data/ folder name exactly
 </script>
 ```
 
-### 5. Add the trip to `trips.json`
+Everything else — the map, stats, day table, journal section, and gear list — loads automatically.
 
-Open `data/trips.json` and add a new entry:
+---
+
+### Step 5 — Add the trip to `trips.json`
+
+Open `/data/trips.json` and add a new entry. This is the only file that needs editing
+to make a trip appear on the homepage.
 
 ```json
+[
+  {
+    "trip_id": "my-new-trip",
+    "page_url": "trips/my-new-trip.html"
+  }
+]
+```
+
+The homepage fetches `meta.json` and all GeoJSON files automatically to compute
+distance, elevation gain, and duration — no manual stat entry required.
+
+---
+
+### Step 6 — Push and you're done
+
+Commit and push all new files. GitHub Pages deploys automatically within ~60 seconds.
+
+---
+
+## Optional — Adding a Gear List
+
+If a `gear.json` file exists in the trip's data folder, a Gear section appears
+automatically below the Journal section. If it doesn't exist, the section is hidden.
+
+**`gear.json` structure:**
+```json
 {
-  "title": "My New Trip",
-  "start_date": "2025-06-01",
-  "end_date": "2025-06-10",
-  "total_distance_miles": 87.4,
-  "total_elevation_gain_ft": 18200,
-  "days": 10,
-  "page_url": "trips/my-new-trip.html"
+  "title": "Trip Name - Gear List",
+  "summary": [
+    { "category": "Big 4",             "weight_lbs": "5.37" },
+    { "category": "Clothing",          "weight_lbs": "1.35" },
+    { "category": "Total Base Weight", "weight_lbs": "9.46 lbs" },
+    { "category": "Total Worn Weight", "weight_lbs": "4.04 lbs" }
+  ],
+  "categories": [
+    {
+      "name": "Big 4",
+      "items": [
+        { "gear": "KS50 (w CF Stays)", "item_type": "Pack", "quantity": "1", "weight_oz": "19.20" }
+      ]
+    }
+  ]
 }
 ```
 
-The `total_distance_miles`, `total_elevation_gain_ft`, and `days` values are shown on the
-homepage card only; they are entered manually here for quick display.
-The trip page itself calculates these live from GeoJSON.
-
-### 6. Push and done
-
-Commit and push. No build step required.
+**To generate `gear.json` from your Word doc:**
+Send the `.docx` gear list file to Claude and ask to convert it to `gear.json`.
+The converter handles the summary table, all category sections, and the Worn Weight section.
 
 ---
 
-## GeoJSON Tips
+## Optional — Adding a Journal and Photos
 
-**Getting your GPS data into GeoJSON:**
+Each trip HTML file has a Journal section below the Day-by-Day table.
+Edit the HTML directly to add your narrative and photos.
 
-- **Garmin / GPS watch**: Export as GPX → convert with [gpsbabel](https://www.gpsbabel.org/) or [gpx.studio](https://gpx.studio)
-- **AllTrails**: Download GPX → convert to GeoJSON
-- **Gaia GPS**: Export as GPX → convert
-- **Komoot**: Export as GPX → convert
-- **Online converter**: [mygeodata.cloud/converter](https://mygeodata.cloud/converter/) — accepts GPX, KML, and others
-
-**Splitting by day:**
-Split your route file at each campsite point. One GeoJSON file = one day.
-
----
-
-## Customisation
-
-| What                          | Where                          |
-|-------------------------------|--------------------------------|
-| Site title / tagline          | `index.html` — `.home-hero`    |
-| Colour palette                | `css/style.css` — `:root`      |
-| Map tile layer                | `js/trip.js` — `buildMap()`    |
-| Day route colours             | `js/utils.js` — `DAY_COLORS_*` |
-| Nav links                     | Any HTML file — `<nav>`        |
-
----
-
-## Map Tile Layers (free, no API key)
-
-The default is ESRI World Imagery (satellite). Alternatives:
-
-```javascript
-// OpenStreetMap (street)
-'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-
-// OpenTopoMap (topographic)
-'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'
-
-// ESRI World Topo
-'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'
+**Text block:**
+```html
+<div class="journal-entry">
+  <p>Your paragraph text goes here.</p>
+  <p>Add as many paragraphs as you like.</p>
+</div>
 ```
 
-Change the tile URL in `buildMap()` inside `js/trip.js`.
+**Photo block — place between text blocks:**
+```html
+<figure class="journal-photo">
+  <img src="../photos/my-new-trip/photo-name.jpg" alt="Describe the photo" />
+  <figcaption>Optional caption text.</figcaption>
+</figure>
+```
+
+**To add a photo:**
+1. Rename the file to lowercase with hyphens (e.g. `day-3-summit.jpg`)
+2. In GitHub: go to `photos/my-new-trip/` → Add file → Upload files
+3. Update the `src` path in the HTML to match the filename
+4. Commit — the photo appears on the live site within ~60 seconds
+
+**Photo tip:** Resize to ~2000px wide before uploading to keep the repo lean.
+GitHub has a 100MB per-file limit and a 1GB total repo limit.
 
 ---
 
-## Browser Compatibility
+## How Stats Are Calculated
 
-Works in all modern browsers. No polyfills needed.
-Requires JavaScript enabled for map and dynamic content.
-Static HTML/CSS works without JavaScript (except map and dynamically loaded stats).
+| Stat | Source |
+|------|--------|
+| Distance | Haversine formula applied to GeoJSON coordinates |
+| Elevation gain | Cumulative positive elevation change from coordinates (metres → feet) |
+| Duration | `end_date` + `end_time` minus `start_date` + `start_time` from `meta.json` |
+| Vert / mile | Total elevation gain ÷ total distance |
+
+If `distance_miles` or `elevation_gain_ft` are present in a day's GeoJSON `properties`,
+those values are used directly instead of being computed.
+
+---
+
+## Customisation Reference
+
+| What to change | Where |
+|----------------|-------|
+| Site name in nav | `index.html` — `.nav-logo` |
+| Homepage headline and tagline | `index.html` — `.home-hero` |
+| Footer quote | `index.html` and every trip HTML — `<footer>` |
+| Colors | `css/style.css` — `:root` variables |
+| Map tile layer (satellite vs topo vs street) | `js/trip.js` — `buildMap()` |
+| Day route colors | `js/utils.js` — `DAY_COLORS_NEUTRAL` and `DAY_COLORS_HOVER` arrays |
+
+---
+
+## Map Tile Options (all free, no API key)
+
+The default is ESRI satellite imagery. Swap the URL in `buildMap()` inside `js/trip.js`:
+
+```javascript
+// ESRI Satellite (current default)
+'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+
+// ESRI Topographic
+'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'
+
+// OpenTopoMap
+'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png'
+
+// OpenStreetMap
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+```
+
+---
+
+## Troubleshooting
+
+**Homepage shows "—" for all stats**
+→ Check that `meta.json` exists in the trip's data folder and is valid JSON.
+→ Paste into [jsonlint.com](https://jsonlint.com) to check for syntax errors.
+
+**Map shows a grey box**
+→ Open the browser console (F12 → Console tab) — look for red error messages.
+→ Most common cause: `window.TRIP_ID` in the HTML doesn't exactly match the `/data/` folder name (case-sensitive on GitHub Pages).
+
+**Route lines don't appear on the map**
+→ Check that the filenames listed in `meta.json`'s `days` array exactly match your `.geojson` filenames.
+→ Paste a GeoJSON file into [geojsonlint.com](https://geojsonlint.com) to check for structure errors.
+→ Verify coordinates are `[longitude, latitude]` order — not `[latitude, longitude]`.
+
+**JSON parse error on homepage or trip page**
+→ Paste the relevant JSON file into [jsonlint.com](https://jsonlint.com).
+→ Most common issues: missing comma between entries, trailing comma after the last entry, or smart quotes instead of straight quotes.
+
+**Gear section not appearing**
+→ Confirm `gear.json` exists at `data/{trip-id}/gear.json`.
+→ Check that `window.TRIP_ID` in the trip HTML matches the folder name.
+
+---
+
+## Deploy to GitHub Pages
+
+1. Push all files to your GitHub repository with `index.html` at the root level
+2. Go to **Settings → Pages**
+3. Set source: **Deploy from a branch**, branch: `main`, folder: `/ (root)`
+4. Visit `https://{username}.github.io/{repo-name}/`
