@@ -232,15 +232,9 @@ function buildTripCard(trip) {
 
 function buildDateRange(start, end) {
   if (!start) return '—';
-  const s = formatDate(start);
+  const s = formatDateLong(start);
   if (!end || end === start) return s;
-  const e = formatDate(end);
-  if (start.slice(0, 4) === end.slice(0, 4)) {
-    const sShort = new Date(start + 'T00:00').toLocaleDateString('en-US', {
-      month: 'long', day: 'numeric'
-    });
-    return `${sShort} – ${e}`;
-  }
+  const e = formatDateLong(end);
   return `${s} – ${e}`;
 }
 
