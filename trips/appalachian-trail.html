@@ -61,8 +61,8 @@
           <div class="value" id="trip-total-elevation">—</div>
         </div>
         <div class="trip-stat-block">
-          <div class="label">Days</div>
-          <div class="value" id="trip-days-count">—</div>
+          <div class="label">Vert / mile</div>
+          <div class="value" id="trip-vert-per-mile">—</div>
         </div>
       </div>
     </header>
@@ -94,13 +94,81 @@
       </table>
     </section>
 
+    <!-- ==================================================
+         JOURNAL SECTION
+         Write your trip narrative here.
+
+         STRUCTURE:
+           - Add paragraphs inside a <div class="journal-entry">
+           - Insert photos using <figure class="journal-photo">
+           - Photos live in /photos/{trip-id}/ in your repo
+           - Captions are optional — delete <figcaption> if not needed
+           - Duplicate the photo block wherever you want one between paragraphs
+
+         PHOTO FOLDER CONVENTION:
+           /photos/appalachian-trail/image-name.jpg
+         ================================================== -->
+    <section class="journal-section">
+      <h2>Journal</h2>
+
+      <!-- Opening paragraphs -->
+      <div class="journal-entry">
+        <p>
+          <!-- Write your opening paragraph here. -->
+          Replace this text with your own narrative. Describe the lead-up to the
+          trip, conditions, who you were with, or whatever feels right as an opening.
+        </p>
+        <p>
+          <!-- Continue with another paragraph, or delete this one. -->
+          A second paragraph. Keep writing as long as you like — the column width
+          is kept narrow intentionally so long-form text stays readable.
+        </p>
+      </div>
+
+      <!-- Photo block — place between paragraphs wherever you like -->
+      <figure class="journal-photo">
+        <img
+          src="../photos/appalachian-trail/your-photo.jpg"
+          alt="Describe the photo here for accessibility"
+        />
+        <!-- Optional caption — delete this line if you don't want one -->
+        <figcaption>Your caption text goes here.</figcaption>
+      </figure>
+
+      <!-- Continue narrative after the photo -->
+      <div class="journal-entry">
+        <p>
+          <!-- Paragraph that follows the photo above. -->
+          Continue your story here. Add as many paragraph + photo blocks
+          as you need — just copy and paste the patterns above.
+        </p>
+      </div>
+
+      <!--
+        TO ADD MORE CONTENT:
+        1. Text block:
+           <div class="journal-entry">
+             <p>Your text.</p>
+           </div>
+
+        2. Photo:
+           <figure class="journal-photo">
+             <img src="../photos/appalachian-trail/photo-name.jpg" alt="Description" />
+             <figcaption>Optional caption.</figcaption>
+           </figure>
+
+        Repeat in any order you like.
+      -->
+
+    </section>
+
   </main>
 
   <!-- ======================================================
        FOOTER
        ====================================================== -->
   <footer>
-    <span>Personal backpacking repository</span>
+    <span>The real voyage of discovery consists not in seeking new landscapes, but in having new eyes. - Marcel Proust</span>
   </footer>
 
   <!-- ======================================================
