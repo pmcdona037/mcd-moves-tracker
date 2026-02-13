@@ -573,3 +573,73 @@ footer {
   pointer-events: none;
   cursor: default;
 }
+
+/* ============================================================
+   JOURNAL SECTION
+   Appears below the Day-by-Day table on each trip page.
+   ============================================================ */
+
+.journal-section {
+  margin-bottom: 5rem;
+}
+
+.journal-section h2 {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 2.5rem;
+  padding-top: 0.5rem;
+}
+
+/* --- Prose blocks ----------------------------------------- */
+.journal-entry {
+  max-width: 680px;
+}
+
+.journal-entry p {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: var(--text);
+  margin-bottom: 1.6rem;
+}
+
+.journal-entry p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- Full-width photo ------------------------------------- */
+.journal-photo {
+  margin: 3rem 0;
+  display: block;
+}
+
+.journal-photo img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--border);
+  /* Optional: constrain very tall portrait shots */
+  max-height: 75vh;
+  object-fit: cover;
+  object-position: center;
+}
+
+.journal-photo figcaption {
+  margin-top: 0.65rem;
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+/* --- Responsive ------------------------------------------- */
+@media (max-width: 680px) {
+  .journal-photo {
+    margin: 2rem 0;
+  }
+
+  .journal-entry p {
+    font-size: 1rem;
+  }
+}
