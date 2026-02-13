@@ -555,3 +555,21 @@ footer {
     font-size: 0.85rem;
   }
 }
+
+/* --- Skeleton loading cards ------------------------------- */
+.trip-skeleton {
+  display: block;
+  background: var(--surface);
+  border-radius: 2px;
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.8; }
+}
+
+.trip-card--loading {
+  pointer-events: none;
+  cursor: default;
+}
