@@ -2,9 +2,9 @@
   "title": "Appalachian Trail - Manitou, NY to New York/Connecticut Border",
   "description": "A 3-day traverse of the Appalachian Trail in New York to the Connecticut Border.",
   "start_date": "2023-02-10",
-  "start_time": "07:00",
+  "start_time": "11:30",
   "end_date": "2023-02-12",
-  "end_time": "15:30",
+  "end_time": "09:30",
   "days": [
     "day-1.geojson",
     "day-2.geojson",
