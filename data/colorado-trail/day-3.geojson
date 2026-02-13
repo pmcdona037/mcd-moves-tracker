@@ -4,8 +4,8 @@
     {
       "type": "Feature",
       "properties": {
-        "day": 2,
-        "name": "Day 2 description"
+        "day": 3,
+        "name": "Day 3 description"
       },
       "geometry": {
         "type": "LineString",
