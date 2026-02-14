@@ -118,7 +118,7 @@ Each file represents one day's route. Coordinates are `[longitude, latitude, ele
 ```
 
 **Getting GPS data into GeoJSON:**
-1. Export your route from Caltopo as **GPX** with "Add SRTM elevation to track points" checked
+1. Export your route from Caltopo as **GPX** with "Add SRTM elevation to track points" checked or add elevation at (https://www.gpsvisualizer.com/convert_input?form:add_elevation=auto&convert_delimiter=comma&units=metric)
 2. Convert GPX to GeoJSON at [gpx.studio](https://gpx.studio) or [mygeodata.cloud/converter](https://mygeodata.cloud/converter/)
 3. Split into one file per day at each campsite
 
